@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	TableName = "user"
+	TableName = "confession"
 )
 
 var Client *gorm.DB
@@ -21,26 +21,26 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	err = Client.AutoMigrate(&model.User{})
+	err = Client.AutoMigrate(&model.Confession{})
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func QueryUserByUsername(username string) (*model.User, error) {
-	var user model.User
-	Client.Table(TableName).Where("username = ?", username).Scan(&user)
-	return &user, nil
+func QueryConfessionByID(confession_id string) (*model.Confession, error) {
+	var confession model.Confession
+	Client.Table(TableName).Where("confession_id = ?", confession_id).Scan(&confession)
+	return &confession, nil
 }
 
-func QueryUserByEmail(email string) (*model.User, error) {
-	var user model.User
-	Client.Table(TableName).Where("email = ?", email).Scan(&user)
-	return &user, nil
+func QueryConfessionByUser(user_id string) (*model.Confession, error) {
+	var confession model.Confession
+	Client.Table(TableName).Where("user_id = ?", user_id).Scan(&confession)
+	return &confession, nil
 }
 
-func Save(user *model.User) error {
-	Client.Table(TableName).Save(user)
+func Save(conffession *model.Confession) error {
+	Client.Table(TableName).Save(conffession)
 	return nil
 }
