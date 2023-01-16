@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"fmt"
 	"main-content/model"
 	"os"
 
@@ -43,4 +44,16 @@ func QueryConfessionByUser(user_id string) (*model.Confession, error) {
 func Save(conffession *model.Confession) error {
 	Client.Table(TableName).Save(conffession)
 	return nil
+}
+
+func Close() {
+	db, err := Client.DB()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	err = db.Close()
+	if err != nil {
+		fmt.Println("cannot close connection: ", err.Error())
+	}
+	fmt.Println("connection closed")
 }
