@@ -11,7 +11,9 @@ import (
 )
 
 func AuthenUser(req events.APIGatewayProxyRequest) (*model.User, error) {
+	fmt.Printf("reqHeader: %+v\n", req.Headers)
 	parseHeader := http.Request{Header: http.Header{"Cookie": []string{req.Headers["Cookie"]}}}
+	fmt.Printf("parserHeader: %+v\n", parseHeader)
 	tokenCookie, err := parseHeader.Cookie("token")
 	if err != nil {
 		fmt.Println(err.Error())

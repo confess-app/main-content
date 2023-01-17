@@ -11,6 +11,8 @@ import (
 
 const (
 	TableName = "confession"
+	HotTag    = "hottest"
+	NewTag    = "newest"
 )
 
 var Client *gorm.DB
@@ -27,6 +29,12 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func QueryConfessionWithPaging(page int, limit int) ([]model.Confession, error) {
+	confession := []model.Confession{}
+	Client.Table(TableName).Offset(page * limit).Limit(limit).Order("created_at").Find(&confession)
+	return confession, nil
 }
 
 func QueryConfessionByID(confessionID string) (*model.Confession, error) {

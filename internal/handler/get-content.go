@@ -6,6 +6,7 @@ import (
 	"main-content/model"
 	"main-content/service/mysql"
 	"net/http"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 )
@@ -33,6 +34,45 @@ func GetOne(query map[string]string, user *model.User) (events.APIGatewayProxyRe
 	return CreateResponse(string(respBody), http.StatusOK)
 }
 
-type GetOneData struct {
-	ConfessionID string `json:"confession_id"`
+func GetByTag(query map[string]string, user *model.User) (events.APIGatewayProxyResponse, error) {
+	pageStr, ok := query["page"]
+	if !ok {
+		pageStr = "1"
+	}
+	tag, ok := query["tag"]
+	if !ok {
+		tag = mysql.HotTag
+	}
+	limitStr, ok := query["limit"]
+	if !ok {
+		limitStr = "30"
+	}
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		fmt.Println("wrong value query string, page: " + pageStr)
+		return CreateResponse("wrong value query string, page: "+pageStr, http.StatusBadRequest)
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		fmt.Println("wrong value query string, limit: " + limitStr)
+		return CreateResponse("wrong value query string, limit: "+limitStr, http.StatusBadRequest)
+	}
+	confessions := []model.Confession{}
+	if tag == mysql.NewTag {
+		confessions, err = mysql.QueryConfessionWithPaging(page, limit)
+		if err != nil {
+			fmt.Println(err.Error())
+			return CreateResponse(err.Error(), http.StatusInternalServerError)
+		}
+	}
+	if len(confessions) == 0 {
+		fmt.Println("confession post had end")
+		return CreateResponse("confession post had end", http.StatusNotFound)
+	}
+	respBody, err := json.Marshal(confessions)
+	if err != nil {
+		fmt.Println(err.Error())
+		return CreateResponse(err.Error(), http.StatusInternalServerError)
+	}
+	return CreateResponse(string(respBody), http.StatusOK)
 }

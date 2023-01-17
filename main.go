@@ -13,6 +13,7 @@ import (
 const (
 	PostPath   = "/content/post"
 	GetOnePath = "/content/get"
+	GetByTag   = "/content/multi-get-by-tag"
 )
 
 func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -29,6 +30,10 @@ func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyRes
 			mysql.Init()
 			defer mysql.Close()
 			return handler.GetOne(req.QueryStringParameters, user)
+		case GetByTag:
+			mysql.Init()
+			defer mysql.Close()
+			return handler.GetByTag(req.QueryStringParameters, user)
 		default:
 			return events.APIGatewayProxyResponse{
 				Body:       "error: url/api not exists",
