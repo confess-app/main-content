@@ -16,8 +16,13 @@ func AuthenUser(req events.APIGatewayProxyRequest) (*model.User, error) {
 	fmt.Printf("parserHeader: %+v\n", parseHeader)
 	tokenCookie, err := parseHeader.Cookie("token")
 	if err != nil {
-		fmt.Println(err.Error())
-		return nil, errors.New("unauthorized")
+		parseHeader = http.Request{Header: http.Header{"Cookie": []string{req.Headers["cookie"]}}}
+		fmt.Printf("parserHeader2: %+v\n", parseHeader)
+		tokenCookie, err = parseHeader.Cookie("token")
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil, errors.New("unauthorized")
+		}
 	}
 	user, err := handler.DecodeTokenToUserModel(tokenCookie.Value)
 	fmt.Printf("user: %+v\n", user)
