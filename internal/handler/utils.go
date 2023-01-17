@@ -39,6 +39,7 @@ func GenerateToken(item *model.User) (string, error) {
 	salt := expireTime.Unix()
 	b, err := json.Marshal(item)
 	if err != nil {
+		fmt.Println(err.Error())
 		return "", err
 	}
 	sEnc := base64.StdEncoding.EncodeToString([]byte(b))
@@ -52,12 +53,14 @@ func DecodeTokenToUserModel(token string) (*model.User, error) {
 	decode1 := token[0 : len(token)-10]
 	decode2, err := base64.StdEncoding.DecodeString(decode1)
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 	removeSalt := string(decode2)[10:]
 	unixStr := string(decode2)[0:10]
 	i, err := strconv.ParseInt(unixStr, 10, 64)
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, errors.New("wrong token")
 	}
 	tm := time.Unix(i, 0)
@@ -66,11 +69,13 @@ func DecodeTokenToUserModel(token string) (*model.User, error) {
 	}
 	finalStr, err := base64.StdEncoding.DecodeString(string(removeSalt))
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 	data := &model.User{}
 	err = json.Unmarshal([]byte(finalStr), &data)
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 	return data, nil
@@ -90,10 +95,12 @@ func RandStringRunes(n int) string {
 func ParseData(body string, model interface{}) error {
 	err := fastjson.Validate(body)
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 	err = json.Unmarshal([]byte(body), &model)
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 	return nil

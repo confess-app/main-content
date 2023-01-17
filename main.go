@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	PostPath = "/content/post"
+	PostPath   = "/content/post"
+	GetOnePath = "/content/get"
 )
 
 func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -23,10 +24,17 @@ func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyRes
 		}, nil
 	}
 	if req.HTTPMethod == http.MethodGet {
-		return events.APIGatewayProxyResponse{
-			Body:       "error: method get not allowed with this url",
-			StatusCode: http.StatusMethodNotAllowed,
-		}, nil
+		switch req.Path {
+		case GetOnePath:
+			mysql.Init()
+			defer mysql.Close()
+			return handler.GetOne(req.QueryStringParameters, user)
+		default:
+			return events.APIGatewayProxyResponse{
+				Body:       "error: url/api not exists",
+				StatusCode: http.StatusNotFound,
+			}, nil
+		}
 	}
 
 	switch req.Path {

@@ -29,15 +29,15 @@ func Init() {
 	}
 }
 
-func QueryConfessionByID(confession_id string) (*model.Confession, error) {
+func QueryConfessionByID(confessionID string) (*model.Confession, error) {
 	var confession model.Confession
-	Client.Table(TableName).Where("confession_id = ?", confession_id).Scan(&confession)
+	Client.Table(TableName).Where("confession_id = ?", confessionID).Scan(&confession)
 	return &confession, nil
 }
 
-func QueryConfessionByUser(user_id string) (*model.Confession, error) {
+func QueryConfessionByUser(userID string) (*model.Confession, error) {
 	var confession model.Confession
-	Client.Table(TableName).Where("user_id = ?", user_id).Scan(&confession)
+	Client.Table(TableName).Where("user_id = ?", userID).Scan(&confession)
 	return &confession, nil
 }
 

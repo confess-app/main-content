@@ -19,6 +19,7 @@ func PostContent(body string, user *model.User) (events.APIGatewayProxyResponse,
 	}
 	newConfID, err := uuid.NewRandom()
 	if err != nil {
+		fmt.Println(err.Error())
 		return CreateResponse(err.Error(), http.StatusInternalServerError)
 	}
 	confession := &model.Confession{
